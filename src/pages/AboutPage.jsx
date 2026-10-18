@@ -3,8 +3,9 @@ import { RESTAURANT_INFO, AWARDS, GALLERY_IMAGES } from '../data/restaurantData'
 import { getStoredStory } from '../data/storage';
 import { Award, ChevronLeft, ChevronRight } from 'lucide-react';
 import KineticTitle from '../components/KineticTitle';
+import Footer from '../components/Footer';
 
-export default function AboutPage({ navigate }) {
+export default function AboutPage({ navigate, onOpenLicensing }) {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [storyContent, setStoryContent] = useState(() => getStoredStory());
 
@@ -34,19 +35,19 @@ export default function AboutPage({ navigate }) {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#0a0b0a] text-[#efe7d2] flex flex-col lg:flex-row">
+    <div className="min-h-screen lg:h-screen w-full bg-[#0a0b0a] text-[#efe7d2] flex flex-col lg:flex-row lg:overflow-hidden">
       
-      {/* LEFT 50%: Fixed Hero Image with Animated Kinetic Title (Pure À PROPOS) */}
-      <div className="w-full lg:w-1/2 h-[45vh] lg:h-screen lg:sticky lg:top-0 relative overflow-hidden bg-[#121312] border-b lg:border-b-0 lg:border-r border-[#333330]/80 p-6 sm:p-10 lg:p-14 flex flex-col justify-end">
-        {/* Cover Image for About */}
+      {/* LEFT 50%: STRICTLY FIXED TO VIEWPORT — DOES NOT SCROLL AT ALL */}
+      <div className="w-full lg:w-1/2 h-[45vh] lg:h-screen lg:fixed lg:top-0 lg:left-0 relative overflow-hidden bg-[#121312] border-b lg:border-b-0 lg:border-r border-[#333330]/80 p-6 sm:p-10 lg:p-14 flex flex-col justify-end z-10 shrink-0">
+        {/* Cover Image for About - 100% Fixed */}
         <img
           src={RESTAURANT_INFO.assets.aboutCover}
           alt="À Propos Yūgen"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
         />
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-[#0a0b0a]/35 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-[#0a0b0a]/35 to-black/20 pointer-events-none" />
 
         {/* Bottom-Left Kinetic Title (pure À PROPOS) */}
         <div className="relative z-10">
@@ -54,155 +55,160 @@ export default function AboutPage({ navigate }) {
         </div>
       </div>
 
-      {/* RIGHT 50%: Scrollable Content with Auto-Scrolling Carousel */}
-      <div className="w-full lg:w-1/2 min-h-screen p-6 sm:p-10 lg:p-14 space-y-12">
+      {/* RIGHT 50%: SCROLLABLE COLUMN */}
+      <div className="w-full lg:w-1/2 lg:ml-[50%] min-h-screen lg:h-screen lg:overflow-y-auto flex flex-col justify-between">
         
-        {/* Introduction */}
-        <div className="pt-20 lg:pt-10 space-y-4">
-          <h2 className="font-serif text-3xl sm:text-5xl text-[#efe7d2] leading-tight">
-            L'Art du Sushi <br />
-            <span className="italic font-light text-[#cfbe91]">Redéfini</span>
-          </h2>
-          <p className="text-xs sm:text-sm text-[#efe7d2]/75 font-light leading-relaxed">
-            {RESTAURANT_INFO.subtitle}
-          </p>
-        </div>
+        <div className="p-6 sm:p-10 lg:p-14 space-y-12">
+          {/* Introduction */}
+          <div className="pt-24 lg:pt-14 space-y-4">
+            <h2 className="font-serif text-3xl sm:text-5xl text-[#efe7d2] leading-tight">
+              L'Art du Sushi <br />
+              <span className="italic font-light text-[#cfbe91]">Redéfini</span>
+            </h2>
+            <p className="text-xs sm:text-sm text-[#efe7d2]/75 font-light leading-relaxed">
+              {RESTAURANT_INFO.subtitle}
+            </p>
+          </div>
 
-        {/* Awards Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {AWARDS.map((award, idx) => (
-            <div
-              key={idx}
-              className="bg-[#141514] border border-[#333330]/80 rounded-2xl p-5 space-y-2"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-widest text-[#cfbe91] font-medium">
-                  {award.source}
-                </span>
-                <Award className="w-4 h-4 text-[#cfbe91]" />
+          {/* Awards Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {AWARDS.map((award, idx) => (
+              <div
+                key={idx}
+                className="bg-[#141514] border border-[#333330]/80 rounded-2xl p-5 space-y-2"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase tracking-widest text-[#cfbe91] font-medium">
+                    {award.source}
+                  </span>
+                  <Award className="w-4 h-4 text-[#cfbe91]" />
+                </div>
+                <h4 className="font-serif text-base sm:text-lg text-[#efe7d2]">
+                  {award.title}
+                </h4>
+                <p className="text-[11px] text-[#efe7d2]/60 font-light leading-relaxed">
+                  {award.description}
+                </p>
               </div>
-              <h4 className="font-serif text-base sm:text-lg text-[#efe7d2]">
-                {award.title}
-              </h4>
-              <p className="text-[11px] text-[#efe7d2]/60 font-light leading-relaxed">
-                {award.description}
-              </p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Auto-scrolling Carousel */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-[0.25em] text-[#cfbe91] font-semibold">
-              Galerie & Atmosphère
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={prevImage}
-                className="p-2 rounded-full bg-[#181918] hover:bg-[#cfbe91] hover:text-[#0a0b0a] text-[#efe7d2] transition-colors border border-[#333330]"
-                aria-label="Image précédente"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={nextImage}
-                className="p-2 rounded-full bg-[#181918] hover:bg-[#cfbe91] hover:text-[#0a0b0a] text-[#efe7d2] transition-colors border border-[#333330]"
-                aria-label="Image suivante"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+          {/* Auto-scrolling Carousel */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] uppercase tracking-[0.25em] text-[#cfbe91] font-semibold">
+                Galerie & Atmosphère
+              </span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={prevImage}
+                  className="p-2 rounded-full bg-[#181918] hover:bg-[#cfbe91] hover:text-[#0a0b0a] text-[#efe7d2] transition-colors border border-[#333330]"
+                  aria-label="Image précédente"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="p-2 rounded-full bg-[#181918] hover:bg-[#cfbe91] hover:text-[#0a0b0a] text-[#efe7d2] transition-colors border border-[#333330]"
+                  aria-label="Image suivante"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Carousel Viewport with smooth image transition */}
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#333330] bg-[#121312] aspect-[16/10] shadow-xl group">
+              <img
+                src={GALLERY_IMAGES[carouselIndex].src}
+                alt={GALLERY_IMAGES[carouselIndex].caption}
+                className="w-full h-full object-cover object-center transition-all duration-700 ease-out"
+              />
+
+              {/* Gradient Overlay & Caption */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+
+              <div className="absolute bottom-4 inset-x-4 z-10 flex items-center justify-between gap-3">
+                <p className="text-xs sm:text-sm text-[#efe7d2] font-serif">
+                  {GALLERY_IMAGES[carouselIndex].caption}
+                </p>
+                <span className="text-[10px] uppercase tracking-widest text-[#cfbe91] shrink-0 bg-black/60 px-2.5 py-1 rounded-full border border-white/10">
+                  {GALLERY_IMAGES[carouselIndex].category}
+                </span>
+              </div>
+
+              {/* Slide Indicators */}
+              <div className="absolute top-4 right-4 z-10 flex items-center gap-1 bg-black/60 px-2.5 py-1 rounded-full border border-white/10">
+                {GALLERY_IMAGES.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCarouselIndex(i)}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                      i === carouselIndex ? 'w-4 bg-[#cfbe91]' : 'bg-white/40'
+                    }`}
+                    aria-label={`Slide ${i + 1}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Carousel Viewport with smooth image transition */}
-          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#333330] bg-[#121312] aspect-[16/10] shadow-xl group">
-            <img
-              src={GALLERY_IMAGES[carouselIndex].src}
-              alt={GALLERY_IMAGES[carouselIndex].caption}
-              className="w-full h-full object-cover object-center transition-all duration-700 ease-out"
-            />
-
-            {/* Gradient Overlay & Caption */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-
-            <div className="absolute bottom-4 inset-x-4 z-10 flex items-center justify-between gap-3">
-              <p className="text-xs sm:text-sm text-[#efe7d2] font-serif">
-                {GALLERY_IMAGES[carouselIndex].caption}
-              </p>
-              <span className="text-[10px] uppercase tracking-widest text-[#cfbe91] shrink-0 bg-black/60 px-2.5 py-1 rounded-full border border-white/10">
-                {GALLERY_IMAGES[carouselIndex].category}
-              </span>
+          {/* Notre Histoire & Chef Portrait */}
+          <div className="space-y-6 pt-4 border-t border-[#333330]/60">
+            <div className="relative rounded-2xl overflow-hidden border border-[#333330] aspect-[16/9] shadow-lg">
+              <img
+                src={RESTAURANT_INFO.assets.chefPortrait}
+                alt="Maître Sushi"
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-transparent to-transparent opacity-80" />
+              <div className="absolute bottom-4 left-4 right-4 z-10">
+                <span className="text-[10px] uppercase tracking-widest text-[#cfbe91] font-semibold">
+                  Savoir-Faire Artisanal
+                </span>
+                <p className="font-serif text-lg text-[#efe7d2]">
+                  La Maîtrise de la Découpe & du Riz Shari
+                </p>
+              </div>
             </div>
 
-            {/* Slide Indicators */}
-            <div className="absolute top-4 right-4 z-10 flex items-center gap-1 bg-black/60 px-2.5 py-1 rounded-full border border-white/10">
-              {GALLERY_IMAGES.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCarouselIndex(i)}
-                  className={`w-1.5 h-1.5 rounded-full transition-all ${
-                    i === carouselIndex ? 'w-4 bg-[#cfbe91]' : 'bg-white/40'
-                  }`}
-                  aria-label={`Slide ${i + 1}`}
-                />
+            <div className="space-y-4 text-xs sm:text-sm text-[#efe7d2]/75 leading-relaxed font-light">
+              <p className="font-serif text-base text-[#cfbe91] italic">
+                « {storyContent.subheading} »
+              </p>
+              {storyContent.paragraphs?.map((p, idx) => (
+                <p key={idx}>{p}</p>
+              ))}
+            </div>
+          </div>
+
+          {/* 4 Pillars of Excellence */}
+          <div className="space-y-4 pt-6 border-t border-[#333330]/60">
+            <h3 className="font-serif text-2xl text-[#efe7d2]">
+              Nos 4 Engagements
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {storyContent.commitments?.map((com, idx) => (
+                <div
+                  key={idx}
+                  className="bg-[#141514] border border-[#333330] rounded-xl p-4 space-y-1.5"
+                >
+                  <span className="text-[10px] text-[#cfbe91] font-mono">0{idx + 1}</span>
+                  <h4 className="font-serif text-sm text-[#efe7d2]">
+                    {com.title}
+                  </h4>
+                  <p className="text-[11px] text-[#efe7d2]/60 font-light leading-relaxed">
+                    {com.desc}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Notre Histoire & Chef Portrait */}
-        <div className="space-y-6 pt-4 border-t border-[#333330]/60">
-          <div className="relative rounded-2xl overflow-hidden border border-[#333330] aspect-[16/9] shadow-lg">
-            <img
-              src={RESTAURANT_INFO.assets.chefPortrait}
-              alt="Maître Sushi"
-              className="w-full h-full object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-transparent to-transparent opacity-80" />
-            <div className="absolute bottom-4 left-4 right-4 z-10">
-              <span className="text-[10px] uppercase tracking-widest text-[#cfbe91] font-semibold">
-                Savoir-Faire Artisanal
-              </span>
-              <p className="font-serif text-lg text-[#efe7d2]">
-                La Maîtrise de la Découpe & du Riz Shari
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-4 text-xs sm:text-sm text-[#efe7d2]/75 leading-relaxed font-light">
-            <p className="font-serif text-base text-[#cfbe91] italic">
-              « {storyContent.subheading} »
-            </p>
-            {storyContent.paragraphs?.map((p, idx) => (
-              <p key={idx}>{p}</p>
-            ))}
-          </div>
-        </div>
-
-        {/* 4 Pillars of Excellence */}
-        <div className="space-y-4 pt-6 border-t border-[#333330]/60">
-          <h3 className="font-serif text-2xl text-[#efe7d2]">
-            Nos 4 Engagements
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {storyContent.commitments?.map((com, idx) => (
-              <div
-                key={idx}
-                className="bg-[#141514] border border-[#333330] rounded-xl p-4 space-y-1.5"
-              >
-                <span className="text-[10px] text-[#cfbe91] font-mono">0{idx + 1}</span>
-                <h4 className="font-serif text-sm text-[#efe7d2]">
-                  {com.title}
-                </h4>
-                <p className="text-[11px] text-[#efe7d2]/60 font-light leading-relaxed">
-                  {com.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Footer attached at the bottom of the right scrollable column */}
+        <Footer navigate={navigate} onOpenLicensing={onOpenLicensing} />
 
       </div>
 

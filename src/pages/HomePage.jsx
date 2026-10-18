@@ -1,19 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { RESTAURANT_INFO } from '../data/restaurantData';
-import { Volume2, VolumeX, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import KineticTitle from '../components/KineticTitle';
 
 export default function HomePage({ navigate }) {
   const videoRef = useRef(null);
-  const [isMuted, setIsMuted] = useState(true);
-
-  const toggleSound = (e) => {
-    e.stopPropagation();
-    if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setIsMuted(videoRef.current.muted);
-    }
-  };
 
   const rightCards = [
     {
@@ -39,33 +30,23 @@ export default function HomePage({ navigate }) {
   return (
     <div className="min-h-screen lg:h-screen w-full bg-[#0a0b0a] text-[#efe7d2] flex flex-col lg:flex-row overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4">
       
-      {/* LEFT 50%: The Video Hero with Kinetic Title (pure title, no subtitle) */}
-      <div className="w-full lg:w-1/2 h-[55vh] lg:h-full relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#121312] border border-[#333330]/80 group flex flex-col justify-end p-6 sm:p-10 lg:p-12 shadow-2xl shrink-0">
+      {/* LEFT 70%: Video Hero with Kinetic Title, strictly muted, NO audio button */}
+      <div className="w-full lg:w-[70%] h-[55vh] lg:h-full relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#121312] border border-[#333330]/80 group flex flex-col justify-end p-6 sm:p-10 lg:p-14 shadow-2xl shrink-0">
         
-        {/* Looping Ambient Video */}
+        {/* Ambient Silent Video Loop */}
         <video
           ref={videoRef}
           src={RESTAURANT_INFO.assets.video}
           autoPlay
           loop
-          muted={isMuted}
+          muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
         />
 
         {/* Cinematic Vignette Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-[#0a0b0a]/30 to-transparent" />
-        <div className="absolute inset-0 bg-black/20" />
-
-        {/* Audio Toggle in top-right */}
-        <button
-          onClick={toggleSound}
-          className="absolute top-6 right-6 z-20 p-2.5 rounded-full bg-black/60 backdrop-blur-md text-[#efe7d2] hover:bg-[#cfbe91] hover:text-[#0a0b0a] transition-all border border-white/10"
-          title={isMuted ? "Activer le son" : "Couper le son"}
-          aria-label={isMuted ? "Activer le son" : "Couper le son"}
-        >
-          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-        </button>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-[#0a0b0a]/35 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-black/15 pointer-events-none" />
 
         {/* Bottom-Left Kinetic Title (pure YŪGEN) */}
         <div className="relative z-10">
@@ -74,8 +55,8 @@ export default function HomePage({ navigate }) {
 
       </div>
 
-      {/* RIGHT 50%: The 3 Vertical Image Cards (Menu, Réservation, Notre Restaurant) */}
-      <div className="w-full lg:w-1/2 h-full flex flex-col gap-3 sm:gap-4 justify-between">
+      {/* RIGHT 30%: The 3 Vertical Image Cards (Menu, Réservation, Notre Restaurant) */}
+      <div className="w-full lg:w-[30%] h-full flex flex-col gap-3 sm:gap-4 justify-between">
         {rightCards.map((card) => (
           <div
             key={card.id}
