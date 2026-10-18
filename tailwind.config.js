@@ -7,62 +7,42 @@ export default {
   theme: {
     extend: {
       colors: {
-        cream: {
-          DEFAULT: '#FFF9EF',
-          light: '#FFFCF7',
-          warm: '#F7EFE3',
-        },
-        espresso: {
-          DEFAULT: '#2B211D',
-          muted: '#5A4C46',
-          faint: 'rgba(43, 33, 29, 0.08)',
-          border: 'rgba(43, 33, 29, 0.16)',
-        },
-        terracotta: {
-          DEFAULT: '#E94B35',
-          hover: '#D33822',
-          light: '#FDEAE7',
-        },
-        riviera: {
-          blue: '#397DD8',
-          deep: '#1E4E8C',
-          light: '#EBF3FC',
-        },
-        limoncello: {
-          DEFAULT: '#F4E6A8',
-          light: '#FBF6DB',
-        },
-        olive: {
-          DEFAULT: '#697348',
-          light: '#EDF1E4',
+        qitchen: {
+          bg: '#0a0b0a',
+          surface: '#121312',
+          card: '#161716',
+          cardHover: '#1c1e1c',
+          border: '#333330',
+          borderLight: 'rgba(239, 231, 210, 0.12)',
+          borderDashed: 'rgba(239, 231, 210, 0.18)',
+          cream: '#efe7d2',
+          creamMuted: 'rgba(239, 231, 210, 0.7)',
+          creamFaint: 'rgba(239, 231, 210, 0.45)',
+          gold: '#cfbe91',
+          goldDark: '#b29f70',
         },
       },
       fontFamily: {
-        serif: ['Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
-        display: ['Fraunces', 'serif'],
+        serif: ['Forum', 'serif'],
         sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
-        widest: '0.22em',
-        tightest: '-0.035em',
+        widest: '0.25em',
+        wider: '0.15em',
+        subtle: '0.05em',
       },
       animation: {
-        'marquee': 'marquee 75s linear infinite',
-        'marquee-reverse': 'marquee-reverse 75s linear infinite',
-        'float-slow': 'float 6s ease-in-out infinite',
+        'fade-in': 'fadeIn 0.6s ease-out forwards',
+        'pulse-subtle': 'pulseSubtle 3s ease-in-out infinite',
       },
       keyframes: {
-        marquee: {
-          '0%': { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-50%)' },
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        'marquee-reverse': {
-          '0%': { transform: 'translateX(-50%)' },
-          '100%': { transform: 'translateX(0%)' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-8px)' },
+        pulseSubtle: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.85' },
         },
       },
     },

@@ -1,212 +1,165 @@
 import React, { useState, useEffect } from 'react';
-import { Menu as MenuIcon, X, Calendar, ArrowUpRight, Phone, MapPin } from 'lucide-react';
 import { RESTAURANT_INFO } from '../data/restaurantData';
+import { Menu as MenuIcon, X, Calendar, Utensils, BookOpen, Compass, ChevronRight } from 'lucide-react';
 
-export default function Navbar({ currentPath, navigate }) {
+export default function Navbar({ currentPath, navigate, selectedDishesCount = 0, onOpenSelection }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
+      setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
-    { label: 'La Carte', path: '/menu' },
-    { label: 'Notre Histoire', path: '/#story', isAnchor: true },
-    { label: 'Événements', path: '/#whats-on', isAnchor: true },
-    { label: 'Privatisation', path: '/private-dining' },
-    { label: 'Nous Trouver', path: '/#visit', isAnchor: true },
+    { label: 'Accueil', path: '/' },
+    { label: 'Menu', path: '/menu' },
+    { label: 'À Propos', path: '/about' },
+    { label: 'Réservation', path: '/reservation' },
   ];
 
-  const handleLinkClick = (e, link) => {
-    e.preventDefault();
+  const handleNav = (path) => {
     setMobileMenuOpen(false);
-
-    if (link.isAnchor) {
-      if (currentPath !== '/') {
-        navigate('/');
-        setTimeout(() => {
-          const anchor = link.path.replace('/#', '');
-          const element = document.getElementById(anchor);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 150);
-      } else {
-        const anchor = link.path.replace('/#', '');
-        const element = document.getElementById(anchor);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    } else {
-      navigate(link.path);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    navigate(path);
   };
 
   return (
-    <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-[#FFF9EF]/95 backdrop-blur-md shadow-sm border-b border-[#2B211D]/10 py-3.5'
-            : 'bg-[#FFF9EF]/80 backdrop-blur-xs py-5 border-b border-[#2B211D]/5'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Logo */}
-          <div className="shrink-0 mr-8 lg:mr-16">
-            <a
-              href="/"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate('/');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+    <header
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        isScrolled
+          ? 'bg-[#0a0b0a]/90 backdrop-blur-md py-3.5 border-b border-[#333330]/60 shadow-2xl'
+          : 'bg-transparent py-5'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
+          
+          {/* Logo QITCHEN */}
+          <button
+            onClick={() => handleNav('/')}
+            className="group flex items-center gap-3 text-left focus:outline-none"
+            aria-label="Accueil Qitchen"
+          >
+            <img
+              src={RESTAURANT_INFO.assets.logo}
+              alt="Qitchen Logo"
+              className="h-7 sm:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                // Fallback to text if image fails
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'block';
               }}
-              className="group flex flex-col items-center text-center cursor-pointer"
-            >
-              <span className="font-serif text-2xl sm:text-3xl tracking-wider text-[#2B211D] font-bold group-hover:text-[#E94B35] transition-colors text-center block">
-                SANTO MARE
-              </span>
-              <span className="text-[10px] tracking-widest text-[#2B211D]/70 uppercase font-sans font-medium -mt-1 text-center block w-full">
-                Cuisine Côtière · Marseille
-              </span>
-            </a>
-          </div>
+            />
+            <span className="hidden font-serif text-2xl tracking-[0.25em] text-[#efe7d2] uppercase">
+              Qitchen
+            </span>
+          </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center justify-center flex-1 gap-8 lg:gap-11 px-4">
+          <nav className="hidden md:flex items-center gap-1 lg:gap-2 bg-[#141514]/80 backdrop-blur-md px-4 py-1.5 rounded-full border border-[#333330]/50 shadow-inner">
             {navLinks.map((link) => {
               const isActive = currentPath === link.path;
               return (
-                <a
-                  key={link.label}
-                  href={link.path}
-                  onClick={(e) => handleLinkClick(e, link)}
-                  className={`relative text-xs lg:text-[13px] tracking-widest uppercase font-semibold transition-colors duration-200 py-1 whitespace-nowrap ${
+                <button
+                  key={link.path}
+                  onClick={() => handleNav(link.path)}
+                  className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all duration-200 rounded-full ${
                     isActive
-                      ? 'text-[#E94B35]'
-                      : 'text-[#2B211D]/85 hover:text-[#E94B35]'
+                      ? 'bg-[#efe7d2] text-[#0a0b0a] font-semibold shadow-sm'
+                      : 'text-[#efe7d2]/75 hover:text-[#efe7d2] hover:bg-white/5'
                   }`}
                 >
                   {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#E94B35] rounded-full" />
-                  )}
-                </a>
+                </button>
               );
             })}
           </nav>
 
-          {/* Desktop Action Button */}
-          <div className="hidden md:flex items-center gap-3 shrink-0 ml-8 lg:ml-12">
+          {/* Right Action: Table Selection & CTA Button */}
+          <div className="hidden md:flex items-center gap-3">
+            {selectedDishesCount > 0 && (
+              <button
+                onClick={onOpenSelection}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs bg-[#cfbe91]/15 text-[#cfbe91] border border-[#cfbe91]/30 hover:bg-[#cfbe91]/25 transition-all"
+                title="Voir ma sélection"
+              >
+                <Utensils className="w-3.5 h-3.5" />
+                <span>{selectedDishesCount} plat{selectedDishesCount > 1 ? 's' : ''}</span>
+              </button>
+            )}
+
             <button
-              onClick={() => {
-                navigate('/book-a-table');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="inline-flex items-center gap-2 bg-[#E94B35] text-white px-5 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase hover:bg-[#D33822] transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm"
+              onClick={() => handleNav('/reservation')}
+              className="relative group overflow-hidden px-5 py-2 rounded-full text-xs uppercase tracking-widest font-medium bg-[#efe7d2] text-[#0a0b0a] transition-all duration-300 hover:bg-[#cfbe91] hover:shadow-[0_0_20px_rgba(207,190,145,0.4)]"
             >
-              <span>Réserver une table</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              <span className="relative z-10 flex items-center gap-2">
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Réserver une table</span>
+              </span>
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Hamburger Button */}
           <div className="flex md:hidden items-center gap-2">
-            <button
-              onClick={() => {
-                navigate('/book-a-table');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="inline-flex items-center gap-1.5 bg-[#E94B35] text-white px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wider uppercase"
-            >
-              <Calendar className="w-3 h-3" />
-              <span>Réserver</span>
-            </button>
+            {selectedDishesCount > 0 && (
+              <button
+                onClick={onOpenSelection}
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-[#cfbe91]/20 text-[#cfbe91] border border-[#cfbe91]/30"
+              >
+                <Utensils className="w-3 h-3" />
+                <span>{selectedDishesCount}</span>
+              </button>
+            )}
+
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-[#2B211D] hover:text-[#E94B35] transition-colors"
-              aria-label="Ouvrir le menu"
+              className="p-2 rounded-lg text-[#efe7d2] hover:bg-white/10 transition-colors focus:outline-none"
+              aria-label="Ouvrir le menu de navigation"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
             </button>
           </div>
+
         </div>
-      </header>
+      </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden bg-[#FFF9EF] flex flex-col justify-between p-6 pt-24 animate-in fade-in duration-200">
-          <div className="flex flex-col gap-6">
-            <div className="border-b border-[#2B211D]/10 pb-4">
-              <span className="text-xs uppercase tracking-widest text-[#2B211D]/50 font-bold">
-                Navigation
-              </span>
-            </div>
-
-            <div className="flex flex-col gap-5">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.path}
-                  onClick={(e) => handleLinkClick(e, link)}
-                  className="font-serif text-2xl text-[#2B211D] hover:text-[#E94B35] transition-colors flex items-center justify-between"
+        <div className="md:hidden fixed inset-x-0 top-[60px] bg-[#0a0b0a]/95 backdrop-blur-xl border-b border-[#333330] p-6 shadow-2xl animate-fade-in">
+          <div className="flex flex-col gap-3">
+            {navLinks.map((link) => {
+              const isActive = currentPath === link.path;
+              return (
+                <button
+                  key={link.path}
+                  onClick={() => handleNav(link.path)}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm uppercase tracking-wider text-left transition-all ${
+                    isActive
+                      ? 'bg-[#efe7d2] text-[#0a0b0a] font-semibold'
+                      : 'text-[#efe7d2]/80 hover:bg-white/5 hover:text-[#efe7d2]'
+                  }`}
                 >
                   <span>{link.label}</span>
-                  <ArrowUpRight className="w-5 h-5 text-[#2B211D]/40" />
-                </a>
-              ))}
-              <a
-                href="/gestionnaire"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setMobileMenuOpen(false);
-                  navigate('/gestionnaire');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="font-serif text-xl text-[#E94B35] hover:underline flex items-center justify-between pt-2 border-t border-[#2B211D]/10"
-              >
-                <span>Espace Gestionnaire</span>
-                <ArrowUpRight className="w-4 h-4 text-[#E94B35]" />
-              </a>
-            </div>
+                  <ChevronRight className={`w-4 h-4 ${isActive ? 'text-[#0a0b0a]' : 'text-[#efe7d2]/40'}`} />
+                </button>
+              );
+            })}
 
-            <div className="pt-4">
+            <div className="pt-3 border-t border-[#333330]/50 mt-1">
               <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  navigate('/book-a-table');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="w-full inline-flex items-center justify-center gap-2 bg-[#E94B35] text-white py-3.5 rounded-full text-sm font-semibold tracking-wider uppercase hover:bg-[#D33822] transition-colors shadow-sm"
+                onClick={() => handleNav('/reservation')}
+                className="w-full py-3.5 rounded-xl text-center text-xs uppercase tracking-widest font-semibold bg-[#cfbe91] text-[#0a0b0a] shadow-lg hover:bg-[#efe7d2] transition-colors flex items-center justify-center gap-2"
               >
+                <Calendar className="w-4 h-4" />
                 <span>Réserver une table</span>
-                <ArrowUpRight className="w-4 h-4" />
               </button>
             </div>
           </div>
-
-          <div className="border-t border-[#2B211D]/10 pt-6 flex flex-col gap-3 text-xs text-[#2B211D]/70 font-sans">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[#E94B35]" />
-              <span>{RESTAURANT_INFO.address}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-[#E94B35]" />
-              <span>{RESTAURANT_INFO.phone}</span>
-            </div>
-            <p className="text-[11px] text-[#2B211D]/50 mt-1">
-              {RESTAURANT_INFO.footerHoursText}
-            </p>
-          </div>
         </div>
       )}
-    </>
+    </header>
   );
 }
