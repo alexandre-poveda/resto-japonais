@@ -1,12 +1,14 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { RESTAURANT_INFO, MENU_CATEGORIES } from '../data/restaurantData';
 import { getStoredMenu } from '../data/storage';
+import { ArrowUp, Lock } from 'lucide-react';
 import KineticTitle from '../components/KineticTitle';
-import Footer from '../components/Footer';
 
 export default function MenuPage({ navigate, onOpenLicensing }) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [menuItems, setMenuItems] = useState(() => getStoredMenu());
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const scrollRef = useRef(null);
 
   // Listen to manager data updates
   useEffect(() => {
@@ -16,6 +18,17 @@ export default function MenuPage({ navigate, onOpenLicensing }) {
     window.addEventListener('yugen_data_updated', handleUpdate);
     return () => window.removeEventListener('yugen_data_updated', handleUpdate);
   }, []);
+
+  const handleScroll = (e) => {
+    const scrollTop = e.currentTarget.scrollTop;
+    setShowBackToTop(scrollTop > 280);
+  };
+
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const filteredDishes = useMemo(() => {
     if (activeCategory === 'all') return menuItems;
@@ -44,11 +57,15 @@ export default function MenuPage({ navigate, onOpenLicensing }) {
       </div>
 
       {/* RIGHT 50%: SCROLLABLE COLUMN WITH VERTICAL DISHES LIST */}
-      <div className="w-full lg:w-1/2 lg:ml-[50%] min-h-screen lg:h-screen lg:overflow-y-auto flex flex-col justify-between">
+      <div 
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="w-full lg:w-1/2 lg:ml-[50%] min-h-screen lg:h-screen lg:overflow-y-auto flex flex-col justify-between scroll-smooth relative"
+      >
         
-        <div className="p-6 sm:p-10 lg:p-14 space-y-10">
-          {/* Category Filter Tabs at Top */}
-          <div className="pt-24 lg:pt-14 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-[#333330]/60">
+        {/* Sticky Category Filter Tabs at Top */}
+        <div className="sticky top-0 z-30 bg-[#0a0b0a]/95 backdrop-blur-md border-b border-[#333330]/60 px-6 sm:px-10 lg:px-14 pt-24 lg:pt-8 pb-4 transition-all">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {MENU_CATEGORIES.map((cat) => {
               const isActive = activeCategory === cat.id;
               return (
@@ -57,7 +74,7 @@ export default function MenuPage({ navigate, onOpenLicensing }) {
                   onClick={() => setActiveCategory(cat.id)}
                   className={`px-4 py-2 rounded-full text-xs uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${
                     isActive
-                      ? 'bg-[#efe7d2] text-[#0a0b0a] font-semibold'
+                      ? 'bg-[#efe7d2] text-[#0a0b0a] font-semibold shadow-md'
                       : 'text-[#efe7d2]/70 hover:text-[#efe7d2] hover:bg-white/5'
                   }`}
                 >
@@ -66,8 +83,10 @@ export default function MenuPage({ navigate, onOpenLicensing }) {
               );
             })}
           </div>
+        </div>
 
-          {/* Dishes Vertical List */}
+        {/* Dishes Vertical List */}
+        <div className="p-6 sm:p-10 lg:p-14 space-y-10">
           <div className="space-y-8 sm:space-y-10">
             {filteredDishes.map((dish) => (
               <div
@@ -117,8 +136,39 @@ export default function MenuPage({ navigate, onOpenLicensing }) {
           </div>
         </div>
 
-        {/* Footer attached at the bottom of the right scrollable column */}
-        <Footer navigate={navigate} onOpenLicensing={onOpenLicensing} />
+        {/* Floating Back to Top Button */}
+        {showBackToTop && (
+          <button
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 z-40 p-3.5 rounded-full bg-[#181918]/90 text-[#efe7d2] border border-[#333330] hover:bg-[#cfbe91] hover:text-[#0a0b0a] transition-all duration-300 shadow-2xl backdrop-blur-md group animate-fade-in"
+            aria-label="Retour en haut"
+            title="Retour en haut"
+          >
+            <ArrowUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+          </button>
+        )}
+
+        {/* Minimal Legal Bar with Manager Lock */}
+        <div className="mt-auto px-6 sm:px-10 lg:px-14 py-6 border-t border-[#333330]/40 flex flex-col sm:flex-row items-center justify-between text-xs text-[#efe7d2]/40 font-light gap-3">
+          <span>© {new Date().getFullYear()} Yūgen Paris. Tous droits réservés.</span>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={onOpenLicensing} 
+              className="hover:text-[#cfbe91] transition-colors"
+            >
+              Mentions Légales
+            </button>
+            <span className="text-[#333330]">•</span>
+            <button
+              onClick={() => navigate('/manager')}
+              className="hover:text-[#cfbe91] transition-colors flex items-center gap-1.5 opacity-60 hover:opacity-100"
+              title="Espace Direction & Gestion"
+            >
+              <Lock className="w-3 h-3 text-[#cfbe91]/70" />
+              <span>Espace Gestionnaire</span>
+            </button>
+          </div>
+        </div>
 
       </div>
 

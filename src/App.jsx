@@ -35,7 +35,7 @@ export default function App() {
 
   const basePath = currentPath.split('?')[0].split('#')[0];
   let PageComponent = HomePage;
-  const isManagerPage = basePath === '/gestionnaire' || basePath === '/gestion';
+  const isManagerPage = basePath === '/gestionnaire' || basePath === '/gestion' || basePath === '/manager';
 
   if (basePath === '/menu') {
     PageComponent = MenuPage;
@@ -51,8 +51,6 @@ export default function App() {
     PageComponent = NotFoundPage;
   }
 
-  const isHomePage = basePath === '/' || basePath === '';
-
   return (
     <div className="bg-[#0a0b0a] text-[#efe7d2] min-h-screen flex flex-col font-sans selection:bg-[#cfbe91] selection:text-[#0a0b0a] overflow-x-hidden">
       
@@ -63,16 +61,11 @@ export default function App() {
 
       {/* Main Page Content */}
       <main className="flex-1 w-full">
-        <PageComponent navigate={navigate} />
-      </main>
-
-      {/* Footer on Subpages (not on homepage and not on manager space) */}
-      {!isHomePage && !isManagerPage && (
-        <Footer
-          navigate={navigate}
-          onOpenLicensing={() => setIsLicensingOpen(true)}
+        <PageComponent 
+          navigate={navigate} 
+          onOpenLicensing={() => setIsLicensingOpen(true)} 
         />
-      )}
+      </main>
 
       {/* Licensing Modal */}
       <LicensingModal

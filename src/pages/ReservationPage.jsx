@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { RESTAURANT_INFO } from '../data/restaurantData';
 import { addReservation } from '../data/storage';
-import { CheckCircle2, Calendar, Clock, User, Mail, Phone, Users, AlertCircle } from 'lucide-react';
+import { CheckCircle2, Calendar, Clock, User, Mail, Phone, Users, AlertCircle, Lock } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import KineticTitle from '../components/KineticTitle';
-import Footer from '../components/Footer';
 
 export default function ReservationPage({ navigate, onOpenLicensing }) {
   const [formData, setFormData] = useState({
@@ -84,10 +83,12 @@ export default function ReservationPage({ navigate, onOpenLicensing }) {
         </div>
       </div>
 
-      {/* RIGHT 50%: SCROLLABLE COLUMN WITH FORM */}
+      {/* RIGHT 50%: SCROLLABLE COLUMN WITH RESTRAINED COMPACT FORM */}
       <div className="w-full lg:w-1/2 lg:ml-[50%] min-h-screen lg:h-screen lg:overflow-y-auto flex flex-col justify-between">
         
-        <div className="p-6 sm:p-10 lg:p-14 space-y-8">
+        {/* Form Container: Strictly centered and restrained in width (max-w-md) inside the 50% column */}
+        <div className="p-6 sm:p-10 lg:p-14 space-y-8 max-w-md mx-auto w-full">
+          
           <div className="pt-24 lg:pt-14 space-y-2">
             <h2 className="font-serif text-3xl sm:text-5xl text-[#efe7d2]">
               Réserver une Table
@@ -98,7 +99,7 @@ export default function ReservationPage({ navigate, onOpenLicensing }) {
           </div>
 
           {submitted ? (
-            <div className="bg-[#141514] border border-[#333330] rounded-2xl p-6 sm:p-10 text-center space-y-6 animate-fade-in">
+            <div className="bg-[#141514] border border-[#333330] rounded-2xl p-6 sm:p-8 text-center space-y-6 animate-fade-in">
               <div className="w-16 h-16 rounded-full bg-[#cfbe91]/15 text-[#cfbe91] flex items-center justify-center mx-auto border border-[#cfbe91]/30">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
@@ -160,7 +161,7 @@ export default function ReservationPage({ navigate, onOpenLicensing }) {
               )}
 
               {/* Name & Guests */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-1.5">
                   <label className="text-[11px] uppercase tracking-wider text-[#efe7d2]/60 font-medium flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-[#cfbe91]" />
@@ -199,7 +200,7 @@ export default function ReservationPage({ navigate, onOpenLicensing }) {
               </div>
 
               {/* Email & Phone */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-1.5">
                   <label className="text-[11px] uppercase tracking-wider text-[#efe7d2]/60 font-medium flex items-center gap-1.5">
                     <Mail className="w-3.5 h-3.5 text-[#cfbe91]" />
@@ -260,7 +261,7 @@ export default function ReservationPage({ navigate, onOpenLicensing }) {
                       <span className="text-[10px] uppercase tracking-widest text-[#cfbe91]">
                         {period.label}
                       </span>
-                      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                         {period.slots.map((slot) => {
                           const isSelected = formData.time === slot;
                           return (
@@ -308,10 +309,30 @@ export default function ReservationPage({ navigate, onOpenLicensing }) {
 
             </form>
           )}
+
         </div>
 
-        {/* Footer attached at the bottom of the right scrollable column */}
-        <Footer navigate={navigate} onOpenLicensing={onOpenLicensing} />
+        {/* Minimal Legal Bar with Manager Lock */}
+        <div className="mt-auto px-6 sm:px-10 lg:px-14 py-6 border-t border-[#333330]/40 flex flex-col sm:flex-row items-center justify-between text-xs text-[#efe7d2]/40 font-light gap-3">
+          <span>© {new Date().getFullYear()} Yūgen Paris. Tous droits réservés.</span>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={onOpenLicensing} 
+              className="hover:text-[#cfbe91] transition-colors"
+            >
+              Mentions Légales
+            </button>
+            <span className="text-[#333330]">•</span>
+            <button
+              onClick={() => navigate('/manager')}
+              className="hover:text-[#cfbe91] transition-colors flex items-center gap-1.5 opacity-60 hover:opacity-100"
+              title="Espace Direction & Gestion"
+            >
+              <Lock className="w-3 h-3 text-[#cfbe91]/70" />
+              <span>Espace Gestionnaire</span>
+            </button>
+          </div>
+        </div>
 
       </div>
 

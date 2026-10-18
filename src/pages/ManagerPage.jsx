@@ -19,8 +19,9 @@ export default function ManagerPage({ navigate }) {
     return sessionStorage.getItem('yugen_manager_auth') === 'true';
   });
 
+  const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
+  const [loginError, setLoginError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('menu'); // 'menu' | 'reservations' | 'info' | 'story'
   const [feedback, setFeedback] = useState(null);
@@ -66,22 +67,27 @@ export default function ManagerPage({ navigate }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const clean = passwordInput.trim().toLowerCase();
-    // Accepted passwords
-    if (clean === 'yugen2026' || clean === 'yugen' || clean === 'admin' || clean === '1234') {
+    const cleanUser = usernameInput.trim().toLowerCase();
+    const cleanPass = passwordInput.trim().toLowerCase();
+
+    const validUsers = ['admin', 'yugen', 'directeur', 'manager', 'alexandre'];
+    const validPasswords = ['yugen2026', 'yugen', 'admin', '1234'];
+
+    if (validUsers.includes(cleanUser) && validPasswords.includes(cleanPass)) {
       sessionStorage.setItem('yugen_manager_auth', 'true');
       setIsAuthenticated(true);
-      setPasswordError(false);
+      setLoginError(false);
     } else {
-      setPasswordError(true);
+      setLoginError(true);
     }
   };
 
   const handleLogout = () => {
     sessionStorage.removeItem('yugen_manager_auth');
     setIsAuthenticated(false);
+    setUsernameInput('');
     setPasswordInput('');
-    setPasswordError(false);
+    setLoginError(false);
   };
 
   // --- DISH ACTIONS ---
@@ -206,23 +212,49 @@ export default function ManagerPage({ navigate }) {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
+            
+            {/* Champ 1: Identifiant */}
             <div className="space-y-1.5">
-              <label className="text-[11px] uppercase tracking-wider text-[#efe7d2]/70 font-medium">
+              <label className="text-[11px] uppercase tracking-wider text-[#efe7d2]/70 font-medium flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#cfbe91]" />
+                Identifiant
+              </label>
+              <input
+                type="text"
+                required
+                autoFocus
+                placeholder="Ex : admin ou yugen"
+                value={usernameInput}
+                onChange={(e) => {
+                  setUsernameInput(e.target.value);
+                  setLoginError(false);
+                }}
+                className={`w-full bg-[#181918] border rounded-xl px-4 py-3 text-xs text-[#efe7d2] placeholder-[#efe7d2]/30 focus:outline-none transition-colors ${
+                  loginError 
+                    ? 'border-red-600 focus:border-red-500' 
+                    : 'border-[#333330] focus:border-[#cfbe91]'
+                }`}
+              />
+            </div>
+
+            {/* Champ 2: Mot de Passe */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider text-[#efe7d2]/70 font-medium flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-[#cfbe91]" />
                 Mot de Passe de Sécurité
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  autoFocus
                   placeholder="Entrez votre mot de passe"
                   value={passwordInput}
                   onChange={(e) => {
                     setPasswordInput(e.target.value);
-                    setPasswordError(false);
+                    setLoginError(false);
                   }}
                   className={`w-full bg-[#181918] border rounded-xl px-4 py-3 text-xs text-[#efe7d2] placeholder-[#efe7d2]/30 pr-10 focus:outline-none transition-colors ${
-                    passwordError 
+                    loginError 
                       ? 'border-red-600 focus:border-red-500' 
                       : 'border-[#333330] focus:border-[#cfbe91]'
                   }`}
@@ -236,17 +268,17 @@ export default function ManagerPage({ navigate }) {
                 </button>
               </div>
 
-              {passwordError && (
+              {loginError && (
                 <p className="text-xs text-red-400 pt-1 flex items-center gap-1.5">
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  Mot de passe incorrect. (Indice : <em>yugen2026</em>)
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  Identifiant ou mot de passe incorrect. (Défaut : <em>admin</em> / <em>yugen2026</em>)
                 </p>
               )}
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-xl text-xs uppercase tracking-widest font-semibold bg-[#efe7d2] text-[#0a0b0a] hover:bg-[#cfbe91] transition-all duration-300 shadow-lg flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-xl text-xs uppercase tracking-widest font-semibold bg-[#efe7d2] text-[#0a0b0a] hover:bg-[#cfbe91] transition-all duration-300 shadow-lg flex items-center justify-center gap-2 mt-2"
             >
               <Unlock className="w-4 h-4" />
               <span>Déverrouiller l'Espace</span>

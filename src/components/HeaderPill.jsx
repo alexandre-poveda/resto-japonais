@@ -34,6 +34,15 @@ export default function HeaderPill({ currentPath, navigate }) {
             </span>
           </button>
 
+          {/* Logo Yūgen à droite de Menu */}
+          <button
+            onClick={() => navigate('/')}
+            className="font-serif tracking-[0.25em] text-sm uppercase text-[#efe7d2] hover:text-[#cfbe91] transition-colors pl-1 font-light"
+            title="Accueil Yūgen"
+          >
+            YŪGEN
+          </button>
+
           {/* Divider */}
           <div className="w-[1px] h-4 bg-[#333330]" />
 
