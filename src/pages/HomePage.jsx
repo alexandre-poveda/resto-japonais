@@ -39,7 +39,7 @@ export default function HomePage({ navigate }) {
   return (
     <div className="min-h-screen lg:h-screen w-full bg-[#0a0b0a] text-[#efe7d2] flex flex-col lg:flex-row overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4">
       
-      {/* LEFT 50%: The Video Hero with Kinetic Title at bottom-left */}
+      {/* LEFT 50%: The Video Hero with Kinetic Title (pure title, no subtitle) */}
       <div className="w-full lg:w-1/2 h-[55vh] lg:h-full relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#121312] border border-[#333330]/80 group flex flex-col justify-end p-6 sm:p-10 lg:p-12 shadow-2xl shrink-0">
         
         {/* Looping Ambient Video */}
@@ -67,12 +67,9 @@ export default function HomePage({ navigate }) {
           {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
         </button>
 
-        {/* Bottom-Left Kinetic Title with Blur-in letter-by-letter */}
+        {/* Bottom-Left Kinetic Title (pure YŪGEN) */}
         <div className="relative z-10">
-          <KineticTitle
-            title={RESTAURANT_INFO.name}
-            subtitle="SENSATION SUSHI"
-          />
+          <KineticTitle title={RESTAURANT_INFO.name} />
         </div>
 
       </div>

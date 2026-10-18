@@ -1,19 +1,30 @@
-import React, { useState, useMemo } from 'react';
-import { RESTAURANT_INFO, MENU_CATEGORIES, MENU_ITEMS } from '../data/restaurantData';
+import React, { useState, useMemo, useEffect } from 'react';
+import { RESTAURANT_INFO, MENU_CATEGORIES } from '../data/restaurantData';
+import { getStoredMenu } from '../data/storage';
 import KineticTitle from '../components/KineticTitle';
 
 export default function MenuPage({ navigate }) {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [menuItems, setMenuItems] = useState(() => getStoredMenu());
+
+  // Listen to manager data updates
+  useEffect(() => {
+    const handleUpdate = () => {
+      setMenuItems(getStoredMenu());
+    };
+    window.addEventListener('yugen_data_updated', handleUpdate);
+    return () => window.removeEventListener('yugen_data_updated', handleUpdate);
+  }, []);
 
   const filteredDishes = useMemo(() => {
-    if (activeCategory === 'all') return MENU_ITEMS;
-    return MENU_ITEMS.filter((item) => item.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === 'all') return menuItems;
+    return menuItems.filter((item) => item.category === activeCategory);
+  }, [activeCategory, menuItems]);
 
   return (
     <div className="min-h-screen w-full bg-[#0a0b0a] text-[#efe7d2] flex flex-col lg:flex-row">
       
-      {/* LEFT 50%: Fixed Hero Image with Animated Kinetic Title */}
+      {/* LEFT 50%: Fixed Hero Image with Animated Kinetic Title (Pure MENU, no subtitle) */}
       <div className="w-full lg:w-1/2 h-[45vh] lg:h-screen lg:sticky lg:top-0 relative overflow-hidden bg-[#121312] border-b lg:border-b-0 lg:border-r border-[#333330]/80 p-6 sm:p-10 lg:p-14 flex flex-col justify-end">
         {/* Cover Image for Menu */}
         <img
@@ -25,12 +36,9 @@ export default function MenuPage({ navigate }) {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-[#0a0b0a]/35 to-black/20" />
 
-        {/* Bottom-Left Kinetic Title with Blur-in letter-by-letter */}
+        {/* Bottom-Left Kinetic Title (pure MENU) */}
         <div className="relative z-10">
-          <KineticTitle
-            title="MENU"
-            subtitle="CARTE GASTRONOMIQUE"
-          />
+          <KineticTitle title="MENU" />
         </div>
       </div>
 
@@ -38,7 +46,7 @@ export default function MenuPage({ navigate }) {
       <div className="w-full lg:w-1/2 min-h-screen p-6 sm:p-10 lg:p-14 space-y-10">
         
         {/* Category Filter Tabs at Top */}
-        <div className="pt-16 lg:pt-8 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-[#333330]/60">
+        <div className="pt-20 lg:pt-10 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-[#333330]/60">
           {MENU_CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
@@ -87,7 +95,7 @@ export default function MenuPage({ navigate }) {
 
                   {/* Price in EUR */}
                   <span className="font-serif text-xl sm:text-2xl text-[#cfbe91] font-medium shrink-0">
-                    {dish.priceStr}
+                    {dish.priceStr || `${dish.price} €`}
                   </span>
                 </div>
 

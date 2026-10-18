@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
 import AboutPage from './pages/AboutPage';
 import ReservationPage from './pages/ReservationPage';
+import ManagerPage from './pages/ManagerPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LicensingModal from './components/LicensingModal';
 
@@ -34,12 +35,16 @@ export default function App() {
 
   const basePath = currentPath.split('?')[0].split('#')[0];
   let PageComponent = HomePage;
+  const isManagerPage = basePath === '/gestionnaire' || basePath === '/gestion';
+
   if (basePath === '/menu') {
     PageComponent = MenuPage;
   } else if (basePath === '/about') {
     PageComponent = AboutPage;
   } else if (basePath === '/reservation' || basePath === '/book-a-table') {
     PageComponent = ReservationPage;
+  } else if (isManagerPage) {
+    PageComponent = ManagerPage;
   } else if (basePath === '/' || basePath === '') {
     PageComponent = HomePage;
   } else {
@@ -51,16 +56,18 @@ export default function App() {
   return (
     <div className="bg-[#0a0b0a] text-[#efe7d2] min-h-screen flex flex-col font-sans selection:bg-[#cfbe91] selection:text-[#0a0b0a] overflow-x-hidden">
       
-      {/* Top-Left Header Pill with links and Fullscreen Burger Menu */}
-      <HeaderPill currentPath={currentPath} navigate={navigate} />
+      {/* Top-Left Header Pill with links and Fullscreen Burger Menu (hidden on manager dashboard) */}
+      {!isManagerPage && (
+        <HeaderPill currentPath={currentPath} navigate={navigate} />
+      )}
 
-      {/* Main Page Content (50/50 Split Layout) */}
+      {/* Main Page Content */}
       <main className="flex-1 w-full">
         <PageComponent navigate={navigate} />
       </main>
 
-      {/* Footer on Subpages */}
-      {!isHomePage && (
+      {/* Footer on Subpages (not on homepage and not on manager space) */}
+      {!isHomePage && !isManagerPage && (
         <Footer
           navigate={navigate}
           onOpenLicensing={() => setIsLicensingOpen(true)}

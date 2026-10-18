@@ -1,55 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-export default function KineticTitle({ title, subtitle, className = '' }) {
-  const [displayText, setDisplayText] = useState(title);
-  const [isAnimating, setIsAnimating] = useState(true);
+export default function KineticTitle({ title, className = '' }) {
+  if (!title) return null;
 
-  useEffect(() => {
-    // When title changes: start fresh animation
-    setIsAnimating(false);
-    const timeout = setTimeout(() => {
-      setDisplayText(title);
-      setIsAnimating(true);
-    }, 150);
-
-    return () => clearTimeout(timeout);
-  }, [title]);
-
-  const characters = Array.from(displayText);
+  // Split into words so lines don't break awkwardly mid-word
+  const words = title.split(' ');
+  let charCounter = 0;
 
   return (
-    <div className={`space-y-2 select-none pointer-events-none ${className}`}>
-      <h1 className="font-serif text-5xl sm:text-7xl lg:text-8xl tracking-wider text-[#efe7d2] leading-[0.95] flex flex-wrap items-baseline">
-        {characters.map((char, index) => (
-          <span
-            key={`${displayText}-${index}`}
-            className="inline-block transition-all duration-700 ease-out"
-            style={{
-              opacity: isAnimating ? 1 : 0,
-              filter: isAnimating ? 'blur(0px)' : 'blur(16px)',
-              transform: isAnimating ? 'translateY(0px)' : 'translateY(24px)',
-              transitionDelay: `${index * 45}ms`,
-              marginRight: char === ' ' ? '0.3em' : '0'
-            }}
-          >
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-        ))}
+    <div key={title} className={`select-none pointer-events-none ${className}`}>
+      <h1 className="font-serif text-5xl sm:text-7xl lg:text-8xl tracking-wider text-[#efe7d2] leading-[0.95] flex flex-wrap gap-x-4 gap-y-2 items-baseline">
+        {words.map((word, wIdx) => {
+          const chars = Array.from(word);
+          return (
+            <span key={wIdx} className="inline-flex whitespace-nowrap">
+              {chars.map((char, cIdx) => {
+                const currentDelay = charCounter * 50; // 50ms stagger per character
+                charCounter++;
+                return (
+                  <span
+                    key={cIdx}
+                    className="animate-kinetic-char"
+                    style={{
+                      animationDelay: `${currentDelay}ms`,
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </span>
+          );
+        })}
       </h1>
-
-      {subtitle && (
-        <p
-          className="text-xs sm:text-sm uppercase tracking-[0.3em] text-[#cfbe91] font-light transition-all duration-1000 ease-out"
-          style={{
-            opacity: isAnimating ? 0.9 : 0,
-            filter: isAnimating ? 'blur(0px)' : 'blur(8px)',
-            transform: isAnimating ? 'translateY(0px)' : 'translateY(12px)',
-            transitionDelay: `${characters.length * 45 + 100}ms`
-          }}
-        >
-          {subtitle}
-        </p>
-      )}
     </div>
   );
 }

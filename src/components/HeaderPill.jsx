@@ -13,8 +13,9 @@ export default function HeaderPill({ currentPath, navigate }) {
 
   return (
     <>
-      <header className="fixed top-5 left-5 z-40">
-        <div className="bg-[#121312]/85 backdrop-blur-md border border-[#333330]/80 rounded-2xl sm:rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 flex items-center gap-3 sm:gap-4 shadow-[0_8px_30px_rgba(0,0,0,0.6)] text-[#efe7d2]">
+      {/* Positioned lower and more to the right as requested */}
+      <header className="fixed top-7 sm:top-10 left-6 sm:left-12 z-40 transition-all duration-300">
+        <div className="bg-[#121312]/85 backdrop-blur-md border border-[#333330]/80 rounded-2xl sm:rounded-full px-4 sm:px-5 py-2.5 sm:py-3 flex items-center gap-3.5 sm:gap-5 shadow-[0_12px_35px_rgba(0,0,0,0.7)] text-[#efe7d2]">
           
           {/* Logo / Brand Name */}
           <button
@@ -31,14 +32,14 @@ export default function HeaderPill({ currentPath, navigate }) {
           <div className="w-[1px] h-4 bg-[#333330]" />
 
           {/* Inline Navigation Links (Desktop) */}
-          <nav className="hidden sm:flex items-center gap-1">
+          <nav className="hidden sm:flex items-center gap-1.5">
             {links.map((link) => {
               const isActive = currentPath === link.path;
               return (
                 <button
                   key={link.path}
                   onClick={() => navigate(link.path)}
-                  className={`px-3 py-1 rounded-full text-xs uppercase tracking-widest transition-all duration-200 ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs uppercase tracking-widest transition-all duration-200 ${
                     isActive
                       ? 'bg-[#efe7d2] text-[#0a0b0a] font-semibold shadow-sm'
                       : 'text-[#efe7d2]/75 hover:text-[#efe7d2] hover:bg-white/5'
@@ -57,7 +58,7 @@ export default function HeaderPill({ currentPath, navigate }) {
           <button
             onClick={() => setMenuOpen(true)}
             className="p-1.5 rounded-lg hover:bg-white/10 text-[#efe7d2] hover:text-[#cfbe91] transition-colors flex items-center gap-2 focus:outline-none"
-            aria-label="Ouvrir le grand menu"
+            aria-label="Ouvrir le menu complet"
             title="Menu complet"
           >
             <div className="flex flex-col gap-1 w-4 sm:w-5">

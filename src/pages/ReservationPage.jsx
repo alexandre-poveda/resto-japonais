@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { RESTAURANT_INFO } from '../data/restaurantData';
+import { addReservation } from '../data/storage';
 import { CheckCircle2, Calendar, Clock, User, Mail, Phone, Users, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import KineticTitle from '../components/KineticTitle';
@@ -34,6 +35,21 @@ export default function ReservationPage({ navigate }) {
     setErrorMsg('');
     const ref = 'YG-' + Math.floor(100000 + Math.random() * 900000);
     setBookingRef(ref);
+
+    // Persist to storage for Manager
+    addReservation({
+      id: ref,
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      guests: formData.guests,
+      date: formData.date,
+      time: formData.time,
+      notes: formData.notes,
+      status: 'confirmée',
+      createdAt: new Date().toISOString()
+    });
+
     setSubmitted(true);
 
     try {
@@ -49,7 +65,7 @@ export default function ReservationPage({ navigate }) {
   return (
     <div className="min-h-screen w-full bg-[#0a0b0a] text-[#efe7d2] flex flex-col lg:flex-row">
       
-      {/* LEFT 50%: Fixed Big Image with Animated Kinetic Title */}
+      {/* LEFT 50%: Fixed Big Image with Animated Kinetic Title (Pure RÉSERVATION) */}
       <div className="w-full lg:w-1/2 h-[45vh] lg:h-screen lg:sticky lg:top-0 relative overflow-hidden bg-[#121312] border-b lg:border-b-0 lg:border-r border-[#333330]/80 p-6 sm:p-10 lg:p-14 flex flex-col justify-end">
         {/* Cover Image for Reservation */}
         <img
@@ -61,19 +77,16 @@ export default function ReservationPage({ navigate }) {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-[#0a0b0a]/35 to-black/20" />
 
-        {/* Bottom-Left Kinetic Title with Blur-in letter-by-letter */}
+        {/* Bottom-Left Kinetic Title (pure RÉSERVATION) */}
         <div className="relative z-10">
-          <KineticTitle
-            title="RÉSERVATION"
-            subtitle="VOTRE TABLE OMAKASE"
-          />
+          <KineticTitle title="RÉSERVATION" />
         </div>
       </div>
 
       {/* RIGHT 50%: Clean Reservation Form */}
       <div className="w-full lg:w-1/2 min-h-screen p-6 sm:p-10 lg:p-14 space-y-8">
         
-        <div className="pt-16 lg:pt-8 space-y-2">
+        <div className="pt-20 lg:pt-10 space-y-2">
           <h2 className="font-serif text-3xl sm:text-5xl text-[#efe7d2]">
             Réserver une Table
           </h2>
