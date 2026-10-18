@@ -1,253 +1,194 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RESTAURANT_INFO, AWARDS, GALLERY_IMAGES, STORY_CONTENT } from '../data/restaurantData';
-import { Award, ChevronLeft, ChevronRight, ZoomIn, ArrowRight, ShieldCheck, Heart, Sparkles } from 'lucide-react';
-import ImageLightbox from '../components/ImageLightbox';
+import { Award, ChevronLeft, ChevronRight } from 'lucide-react';
+import KineticTitle from '../components/KineticTitle';
 
 export default function AboutPage({ navigate }) {
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [lightboxIndex, setLightboxIndex] = useState(null);
+
+  // Auto-scroll carousel every 3.5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCarouselIndex((prev) => (prev + 1) % GALLERY_IMAGES.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, []);
 
   const prevImage = () => {
     setCarouselIndex((prev) => (prev === 0 ? GALLERY_IMAGES.length - 1 : prev - 1));
   };
 
   const nextImage = () => {
-    setCarouselIndex((prev) => (prev === GALLERY_IMAGES.length - 1 ? 0 : prev + 1));
+    setCarouselIndex((prev) => (prev + 1) % GALLERY_IMAGES.length);
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0b0a] text-[#efe7d2] pt-24 sm:pt-28 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 sm:space-y-28">
+    <div className="min-h-screen w-full bg-[#0a0b0a] text-[#efe7d2] flex flex-col lg:flex-row">
+      
+      {/* LEFT 50%: Fixed Hero Image with Animated Kinetic Title */}
+      <div className="w-full lg:w-1/2 h-[45vh] lg:h-screen lg:sticky lg:top-0 relative overflow-hidden bg-[#121312] border-b lg:border-b-0 lg:border-r border-[#333330]/80 p-6 sm:p-10 lg:p-14 flex flex-col justify-end">
+        {/* Cover Image for About */}
+        <img
+          src={RESTAURANT_INFO.assets.aboutCover}
+          alt="À Propos Yūgen"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-[#0a0b0a]/35 to-black/20" />
+
+        {/* Bottom-Left Kinetic Title with Blur-in letter-by-letter */}
+        <div className="relative z-10">
+          <KineticTitle
+            title="À PROPOS"
+            subtitle="NOTRE HISTOIRE"
+          />
+        </div>
+      </div>
+
+      {/* RIGHT 50%: Scrollable Content with Auto-Scrolling Carousel */}
+      <div className="w-full lg:w-1/2 min-h-screen p-6 sm:p-10 lg:p-14 space-y-12">
         
-        {/* Top Hero Section */}
-        <div className="text-center max-w-3xl mx-auto space-y-5">
-          <span className="text-[11px] uppercase tracking-[0.3em] text-[#cfbe91] font-semibold">
-            Maison Qitchen
-          </span>
-          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl text-[#efe7d2] tracking-wide leading-[1.05]">
+        {/* Introduction */}
+        <div className="pt-16 lg:pt-8 space-y-4">
+          <h2 className="font-serif text-3xl sm:text-5xl text-[#efe7d2] leading-tight">
             L'Art du Sushi <br />
             <span className="italic font-light text-[#cfbe91]">Redéfini</span>
-          </h1>
-          <p className="text-sm sm:text-base text-[#efe7d2]/75 font-light leading-relaxed max-w-2xl mx-auto">
+          </h2>
+          <p className="text-xs sm:text-sm text-[#efe7d2]/75 font-light leading-relaxed">
             {RESTAURANT_INFO.subtitle}
           </p>
         </div>
 
-        {/* Awards / Badges Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Awards Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {AWARDS.map((award, idx) => (
             <div
               key={idx}
-              className="glass-card rounded-2xl p-6 sm:p-8 space-y-3 relative group"
+              className="bg-[#141514] border border-[#333330]/80 rounded-2xl p-5 space-y-2"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-widest text-[#cfbe91] font-medium">
+                <span className="text-[10px] uppercase tracking-widest text-[#cfbe91] font-medium">
                   {award.source}
                 </span>
-                <Award className="w-5 h-5 text-[#cfbe91]" />
+                <Award className="w-4 h-4 text-[#cfbe91]" />
               </div>
-
-              <h3 className="font-serif text-xl sm:text-2xl text-[#efe7d2]">
+              <h4 className="font-serif text-base sm:text-lg text-[#efe7d2]">
                 {award.title}
-              </h3>
-
-              <p className="text-xs text-[#efe7d2]/70 leading-relaxed font-light">
+              </h4>
+              <p className="text-[11px] text-[#efe7d2]/60 font-light leading-relaxed">
                 {award.description}
               </p>
-
-              <div className="pt-2 text-[11px] tracking-wider text-[#cfbe91] font-medium">
-                {award.badge}
-              </div>
             </div>
           ))}
         </div>
 
-        {/* Interactive Photo Carousel */}
-        <div className="space-y-6">
-          <div className="flex items-end justify-between">
-            <div className="space-y-1">
-              <span className="text-[11px] uppercase tracking-[0.25em] text-[#cfbe91] font-semibold">
-                Immersion Visuelle
-              </span>
-              <h2 className="font-serif text-2xl sm:text-4xl text-[#efe7d2]">
-                La Galerie de Nos Créations
-              </h2>
-            </div>
-
-            {/* Navigation buttons */}
-            <div className="flex items-center gap-2">
+        {/* Auto-scrolling Carousel */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] uppercase tracking-[0.25em] text-[#cfbe91] font-semibold">
+              Galerie & Atmosphère
+            </span>
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={prevImage}
-                className="p-3 rounded-full bg-[#161716] text-[#efe7d2] hover:bg-[#cfbe91] hover:text-[#0a0b0a] border border-[#333330] transition-colors"
+                className="p-2 rounded-full bg-[#181918] hover:bg-[#cfbe91] hover:text-[#0a0b0a] text-[#efe7d2] transition-colors border border-[#333330]"
                 aria-label="Image précédente"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={nextImage}
-                className="p-3 rounded-full bg-[#161716] text-[#efe7d2] hover:bg-[#cfbe91] hover:text-[#0a0b0a] border border-[#333330] transition-colors"
+                className="p-2 rounded-full bg-[#181918] hover:bg-[#cfbe91] hover:text-[#0a0b0a] text-[#efe7d2] transition-colors border border-[#333330]"
                 aria-label="Image suivante"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Carousel Viewport */}
-          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#333330] bg-[#121312] aspect-[16/9] sm:aspect-[21/9] max-h-[550px] shadow-2xl group">
+          {/* Carousel Viewport with smooth image transition */}
+          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#333330] bg-[#121312] aspect-[16/10] shadow-xl group">
             <img
               src={GALLERY_IMAGES[carouselIndex].src}
               alt={GALLERY_IMAGES[carouselIndex].caption}
-              className="w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105 cursor-pointer"
-              onClick={() => setLightboxIndex(carouselIndex)}
+              className="w-full h-full object-cover object-center transition-all duration-700 ease-out"
             />
 
-            {/* Overlay Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+            {/* Gradient Overlay & Caption */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
 
-            {/* Caption & Zoom trigger */}
-            <div className="absolute bottom-6 inset-x-6 z-10 flex items-end justify-between gap-4">
-              <div className="space-y-1 max-w-lg">
-                <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-[#cfbe91] bg-black/60 px-2.5 py-1 rounded-full border border-white/10">
-                  {GALLERY_IMAGES[carouselIndex].category}
-                </span>
-                <p className="text-sm sm:text-base text-[#efe7d2] font-serif">
-                  {GALLERY_IMAGES[carouselIndex].caption}
-                </p>
-              </div>
-
-              <button
-                onClick={() => setLightboxIndex(carouselIndex)}
-                className="p-3 rounded-full bg-black/60 backdrop-blur-md text-[#efe7d2] hover:bg-[#cfbe91] hover:text-[#0a0b0a] border border-white/10 transition-colors flex items-center gap-2 text-xs"
-                title="Agrandir en plein écran"
-              >
-                <ZoomIn className="w-4 h-4" />
-                <span className="hidden sm:inline uppercase tracking-widest text-[10px]">Agrandir</span>
-              </button>
+            <div className="absolute bottom-4 inset-x-4 z-10 flex items-center justify-between gap-3">
+              <p className="text-xs sm:text-sm text-[#efe7d2] font-serif">
+                {GALLERY_IMAGES[carouselIndex].caption}
+              </p>
+              <span className="text-[10px] uppercase tracking-widest text-[#cfbe91] shrink-0 bg-black/60 px-2.5 py-1 rounded-full border border-white/10">
+                {GALLERY_IMAGES[carouselIndex].category}
+              </span>
             </div>
 
-            {/* Pagination Dots */}
-            <div className="absolute top-6 right-6 z-10 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10">
-              {GALLERY_IMAGES.map((_, idx) => (
+            {/* Slide Indicators */}
+            <div className="absolute top-4 right-4 z-10 flex items-center gap-1 bg-black/60 px-2.5 py-1 rounded-full border border-white/10">
+              {GALLERY_IMAGES.map((_, i) => (
                 <button
-                  key={idx}
-                  onClick={() => setCarouselIndex(idx)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    idx === carouselIndex ? 'w-5 bg-[#cfbe91]' : 'bg-white/30 hover:bg-white/60'
+                  key={i}
+                  onClick={() => setCarouselIndex(i)}
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                    i === carouselIndex ? 'w-4 bg-[#cfbe91]' : 'bg-white/40'
                   }`}
-                  aria-label={`Aller à l'image ${idx + 1}`}
+                  aria-label={`Slide ${i + 1}`}
                 />
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Thumbnails row */}
-          <div className="grid grid-cols-6 gap-3 pt-2">
-            {GALLERY_IMAGES.map((img, idx) => (
-              <div
-                key={idx}
-                onClick={() => setCarouselIndex(idx)}
-                className={`relative aspect-video rounded-xl overflow-hidden cursor-pointer border transition-all duration-300 ${
-                  idx === carouselIndex
-                    ? 'border-[#cfbe91] ring-2 ring-[#cfbe91]/30 opacity-100 scale-102'
-                    : 'border-[#333330] opacity-50 hover:opacity-80'
-                }`}
-              >
-                <img src={img.src} alt={img.caption} className="w-full h-full object-cover" />
-              </div>
+        {/* Notre Histoire & Chef Portrait */}
+        <div className="space-y-6 pt-4 border-t border-[#333330]/60">
+          <div className="relative rounded-2xl overflow-hidden border border-[#333330] aspect-[16/9] shadow-lg">
+            <img
+              src={RESTAURANT_INFO.assets.chefPortrait}
+              alt="Maître Sushi"
+              className="w-full h-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-transparent to-transparent opacity-80" />
+            <div className="absolute bottom-4 left-4 right-4 z-10">
+              <span className="text-[10px] uppercase tracking-widest text-[#cfbe91] font-semibold">
+                Savoir-Faire Artisanal
+              </span>
+              <p className="font-serif text-lg text-[#efe7d2]">
+                La Maîtrise de la Découpe & du Riz Shari
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4 text-xs sm:text-sm text-[#efe7d2]/75 leading-relaxed font-light">
+            <p className="font-serif text-base text-[#cfbe91] italic">
+              « {STORY_CONTENT.subheading} »
+            </p>
+            {STORY_CONTENT.paragraphs.map((p, idx) => (
+              <p key={idx}>{p}</p>
             ))}
           </div>
         </div>
 
-        {/* Our Story Narrative Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          
-          {/* Left: Master Chef & Craftsmanship Portrait */}
-          <div className="lg:col-span-5 relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#333330] bg-[#141514] shadow-2xl group">
-            <img
-              src={RESTAURANT_INFO.assets.chefPortrait}
-              alt="Maître Sushi au travail"
-              className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0a] via-transparent to-transparent opacity-80" />
-            <div className="absolute bottom-6 left-6 right-6 z-10 space-y-1">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-[#cfbe91] font-semibold">
-                Maître Sushi Exécutif
-              </span>
-              <p className="font-serif text-xl text-[#efe7d2]">
-                Kenzo Takahashi
-              </p>
-              <p className="text-xs text-[#efe7d2]/70 font-light">
-                25 ans de dévouement à la pureté de la découpe et à la transmission de l'Omakase.
-              </p>
-            </div>
-          </div>
-
-          {/* Right: The Story & Philosophy */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="space-y-3">
-              <span className="text-[11px] uppercase tracking-[0.25em] text-[#cfbe91] font-semibold">
-                Notre Histoire
-              </span>
-              <h2 className="font-serif text-3xl sm:text-5xl text-[#efe7d2] leading-tight">
-                {STORY_CONTENT.headline}
-              </h2>
-            </div>
-
-            <p className="text-base text-[#cfbe91] font-serif leading-relaxed italic">
-              « {STORY_CONTENT.subheading} »
-            </p>
-
-            <div className="space-y-4 text-xs sm:text-sm text-[#efe7d2]/75 leading-relaxed font-light">
-              {STORY_CONTENT.paragraphs.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
-
-            <div className="pt-4 flex flex-wrap gap-4">
-              <button
-                onClick={() => navigate('/menu')}
-                className="px-6 py-3 rounded-full text-xs uppercase tracking-widest font-semibold bg-[#efe7d2] text-[#0a0b0a] hover:bg-[#cfbe91] transition-colors flex items-center gap-2"
-              >
-                <span>Découvrir la carte</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={() => navigate('/reservation')}
-                className="px-6 py-3 rounded-full text-xs uppercase tracking-widest font-medium bg-white/5 hover:bg-white/10 text-[#efe7d2] border border-[#efe7d2]/20 transition-colors"
-              >
-                Réserver une table
-              </button>
-            </div>
-          </div>
-
-        </div>
-
         {/* 4 Pillars of Excellence */}
-        <div className="space-y-8 pt-8 border-t border-[#333330]/60">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-[11px] uppercase tracking-[0.25em] text-[#cfbe91] font-semibold">
-              Exigence & Pureté
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl text-[#efe7d2]">
-              Nos 4 Engagements Fondateurs
-            </h2>
-          </div>
+        <div className="space-y-4 pt-6 border-t border-[#333330]/60">
+          <h3 className="font-serif text-2xl text-[#efe7d2]">
+            Nos 4 Engagements
+          </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {STORY_CONTENT.commitments.map((com, idx) => (
               <div
                 key={idx}
-                className="bg-[#141514] border border-[#333330] rounded-2xl p-6 space-y-3 hover:border-[#cfbe91]/40 transition-colors"
+                className="bg-[#141514] border border-[#333330] rounded-xl p-4 space-y-1.5"
               >
-                <div className="w-8 h-8 rounded-full bg-[#cfbe91]/10 text-[#cfbe91] flex items-center justify-center font-serif text-sm">
-                  0{idx + 1}
-                </div>
-                <h3 className="font-serif text-lg text-[#efe7d2]">
+                <span className="text-[10px] text-[#cfbe91] font-mono">0{idx + 1}</span>
+                <h4 className="font-serif text-sm text-[#efe7d2]">
                   {com.title}
-                </h3>
-                <p className="text-xs text-[#efe7d2]/70 font-light leading-relaxed">
+                </h4>
+                <p className="text-[11px] text-[#efe7d2]/60 font-light leading-relaxed">
                   {com.desc}
                 </p>
               </div>
@@ -256,15 +197,6 @@ export default function AboutPage({ navigate }) {
         </div>
 
       </div>
-
-      {/* Lightbox Modal */}
-      <ImageLightbox
-        images={GALLERY_IMAGES}
-        currentIndex={lightboxIndex}
-        onClose={() => setLightboxIndex(null)}
-        onPrev={() => setLightboxIndex((prev) => (prev === 0 ? GALLERY_IMAGES.length - 1 : prev - 1))}
-        onNext={() => setLightboxIndex((prev) => (prev === GALLERY_IMAGES.length - 1 ? 0 : prev + 1))}
-      />
 
     </div>
   );
